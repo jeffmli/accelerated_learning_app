@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Flashcard Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Flashcard Generator</h1>
+        <h3 style="text-align: center; margin-bottom: 20px; color: #666;">Generate flashcards from your notes with AI</h3>
+        <div class="input-section">
+            <h2>Paste Your Notes</h2>
+            <textarea id="notes-input" placeholder="Paste your notes here..."></textarea>
+        </div>
+        <div class="button-section">
+            <button id="generate-btn">Generate Flashcards</button>
+        </div>
+        
+        <div class="results-section">
+            <h2>Generated Flashcards</h2>
+            <div id="flashcards-container">
+                <!-- Flashcards will appear here -->
+                <div class="placeholder-message">Your flashcards will appear here after generation.</div>
+            </div>
+            <div class="button-group">
+                <button id="submit-btn" style="display: none;">Submit to Mochi</button>
+                <button id="download-btn" style="display: none;">Download JSON</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
