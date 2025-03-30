@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // Make an API request to the backend server
-            const response = await fetch('http://127.0.0.1:8000/generate-flashcards-openai', {
+            const response = await fetch('http://127.0.0.1:8000/api/generate-flashcards', {
                 method: 'POST',                  // Use POST HTTP method
                 headers: {
                     'Content-Type': 'application/json'  // Set the content type to JSON
                 },
-                body: JSON.stringify({ notes: notes })  // Convert the notes object to a JSON string
+                body: JSON.stringify({ text: notes })  // Changed from "notes" to "text" to match our API model
             });
 
             // Check if the response was successful
@@ -41,7 +41,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Parse the JSON response from the server
-            flashcards = await response.json();
+            const responseData = await response.json();
+            
+            // Check if the response contains the expected data structure
+            if (responseData.status === 'success' && responseData.data) {
+                try {
+                    // Try to parse the data as JSON (our backend returns a JSON string)
+                    const parsedData = JSON.parse(responseData.data);
+                    flashcards = parsedData;
+                } catch (parseError) {
+                    console.error('Error parsing response data:', parseError);
+                    flashcards = []; // Set empty array if parsing fails
+                    throw new Error('Could not parse flashcard data from server response');
+                }
+            } else {
+                // If response doesn't have the expected structure
+                console.error('Unexpected response format:', responseData);
+                flashcards = [];
+                throw new Error('Unexpected response format from server');
+            }
+
             // Generate HTML for each flashcard and update the container
             flashcardsContainer.innerHTML = flashcards.map(flashcard => `
                 <div class="flashcard">

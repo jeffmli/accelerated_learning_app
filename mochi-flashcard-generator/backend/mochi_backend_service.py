@@ -1,10 +1,11 @@
 import requests
 import json
 from requests.auth import HTTPBasicAuth
+import os
 
 # Configuration
 MOCHI_API_BASE_URL = "https://app.mochi.cards/api"  # Replace with actual Mochi API URL
-API_KEY = "12345"  # Replace with your actual API key
+API_KEY = os.environ.get("MOCHI_API_KEY") # Replace with your actual API key
 
 
 def create_flashcard(deck_id, front_content, back_content):
@@ -171,7 +172,8 @@ def create_deck(name, parent_id=None, sort=None, archived=None, trashed=None,
         }
 
 # # If you want to expose this as an API endpoint using Flask
-# if __name__ == "__main__":
-#     # Simple test to run directly
-#     # result = test_mochi_connection()
-#     # result = create_deck("test deck")
+if __name__ == "__main__":
+    # Simple test to run directly
+    # result = test_mochi_connection()
+    result = create_deck("test deck")
+    print(result)
