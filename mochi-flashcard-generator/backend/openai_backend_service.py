@@ -2,17 +2,23 @@ import openai
 import logging
 import os
 
-openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 logger = logging.getLogger(__name__)
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 def generate_response(prompt: str):
     """
     Generate a response using OpenAI
     """
     try:
-        client = openai.OpenAI()
+        # The issue is that os.environ.get() is looking for an environment variable with that name,
+        # not using the string itself as the API key. Let's set it directly:
+
+        print(openai.api_key)
+
+        client = openai.OpenAI(api_key="Add API Key Here")
 
         response = client.responses.create(
             model="gpt-4o",

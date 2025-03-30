@@ -4,6 +4,7 @@ import uvicorn
 import backend.openai_backend_service as openai_backend_service
 from pydantic import BaseModel
 import logging
+import os
 
 # Configure logging
 logging.basicConfig(
@@ -16,6 +17,9 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+# We're now handling the OpenAI API key in openai_backend_service.py
+# so we don't need to set it here
 
 app = FastAPI()
 
