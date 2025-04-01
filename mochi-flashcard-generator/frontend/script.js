@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             // Make an API request to the backend server
-            const response = await fetch('http://127.0.0.1:8000/api/generate-flashcards', {
+            const response = await fetch('http://localhost:8000/api/generate-flashcards', {
                 method: 'POST',                  // Use POST HTTP method
                 headers: {
                     'Content-Type': 'application/json'  // Set the content type to JSON
                 },
-                body: JSON.stringify({ text: notes })  // Changed from "notes" to "text" to match our API model
+                body: JSON.stringify({ text: notes })  // Using 'text' to match the backend API model
             });
 
             // Check if the response was successful
@@ -43,16 +43,44 @@ document.addEventListener('DOMContentLoaded', function() {
             // Parse the JSON response from the server
             const responseData = await response.json();
             
+            // Add debugging to see what's actually coming back
+            console.log('Response from server:', responseData);
+            
             // Check if the response contains the expected data structure
             if (responseData.status === 'success' && responseData.data) {
+                console.log('Response data before parsing:', typeof responseData.data, responseData.data);
                 try {
-                    // Try to parse the data as JSON (our backend returns a JSON string)
-                    const parsedData = JSON.parse(responseData.data);
-                    flashcards = parsedData;
+                    let jsonData = responseData.data;
+                    
+                    // Handle potential markdown code blocks in the response
+                    if (typeof jsonData === 'string') {
+                        // Remove markdown code block syntax if present
+                        if (jsonData.includes('```json')) {
+                            jsonData = jsonData.replace(/```json\n|\n```/g, '');
+                        } else if (jsonData.includes('```')) {
+                            jsonData = jsonData.replace(/```\n|\n```/g, '');
+                        }
+                        
+                        // Try to parse the cleaned string
+                        const parsedData = JSON.parse(jsonData);
+                        console.log('Parsed data:', parsedData);
+                        flashcards = parsedData;
+                    } else if (typeof jsonData === 'object') {
+                        // If it's already an object, use it directly
+                        console.log('Data is already an object, using directly');
+                        flashcards = jsonData;
+                    }
                 } catch (parseError) {
                     console.error('Error parsing response data:', parseError);
-                    flashcards = []; // Set empty array if parsing fails
-                    throw new Error('Could not parse flashcard data from server response');
+                    console.log('Response data that failed parsing:', responseData.data);
+                    // If it's not valid JSON, let's try using it directly
+                    if (typeof responseData.data === 'object' && Array.isArray(responseData.data)) {
+                        console.log('Using data directly as it appears to be an array already');
+                        flashcards = responseData.data;
+                    } else {
+                        flashcards = []; // Set empty array if parsing fails
+                        throw new Error('Could not parse flashcard data from server response');
+                    }
                 }
             } else {
                 // If response doesn't have the expected structure
